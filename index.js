@@ -77,12 +77,12 @@ var spawn           = require('child_process').spawn
   , pygmentize = function (options, code, callback) {
       options = options || {}
 
-      var execArgs = [
-              '-f', options.format || defaultFormat
-            , '-l', options.lang || defaultLang
-            , '-P', 'encoding=' + (options.encoding || defaultEncoding)
-          ]
-        , exec = spawn(path.join(__dirname, 'vendor/pygments/pygmentize'), execArgs)
+      var execArgs = options.args || [];
+      if (execArgs.indexOf("-f") == -1) { execArgs.push('-f'); execArgs.push(options.format || defaultFormat) }
+      if (execArgs.indexOf("-l") == -1) { execArgs.push('-l'); execArgs.push(options.lang || defaultLang) }
+      if (execArgs.indexOf("-P") == -1) { execArgs.push('-P'); execArgs.push('encoding=' + (options.encoding || defaultEncoding)) }
+
+      var exec = spawn(path.join(__dirname, 'vendor/pygments/pygmentize'), execArgs)
 
       return typeof code == 'string' && typeof callback == 'function'
         ? fromString(exec, code, callback)
